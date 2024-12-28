@@ -1,0 +1,29 @@
+{
+  "name": "js_custom_chart_wt",
+  "version": "1.0.0",
+  "description": "Custom JS Chart",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jlajr36/JS_Custom_Chart_WT.git"
+  },
+  "keywords": [
+    "javascript",
+    "chart"
+  ],
+  "author": "John Amos",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jlajr36/JS_Custom_Chart_WT/issues"
+  },
+  "homepage": "https://github.com/jlajr36/JS_Custom_Chart_WT#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "_comment_nodemon_start": "npm run dev",
+  "_comment_node_start": "node server.js"
+}
