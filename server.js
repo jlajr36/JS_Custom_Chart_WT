@@ -1,9 +1,17 @@
-var http = require('http');
-var fs = require('fs');
-http.createServer(function (req, res) {
-    fs.readFile('demo.html', function(err, data) {
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.write(data);
-        return res.end();
-    });
-}).listen(8080);
+const express = require('express');
+const path = require('path')
+const app = express();
+
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Home page route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'demo.html'));
+});
+
+// Listen for request on port 8080
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://locallost:${PORT}`);
+});

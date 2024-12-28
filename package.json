@@ -25,5 +25,8 @@
     "nodemon": "^3.1.9"
   },
   "_comment_nodemon_start": "npm run dev",
-  "_comment_node_start": "node server.js"
+  "_comment_node_start": "node server.js",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
 }
