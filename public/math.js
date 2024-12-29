@@ -39,6 +39,20 @@ math.remapPoint = (oldBounds, newBounds, point) => {
     ];
 }
 
+math.add = (p1, p2) => {
+    return [
+        p1[0] + p2[0],
+        p1[1] + p2[1]
+    ];
+}
+
+math.subtract = (p1, p2) => {
+    return [
+        p1[0] - p2[0],
+        p1[1] - p2[1]
+    ];
+}
+
 math.formatNumber = (num, numDec=0) => {
     return num.toFixed(numDec);
 }
