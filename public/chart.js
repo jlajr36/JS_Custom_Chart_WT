@@ -51,6 +51,21 @@ class Chart {
     }
 
     #draw() {
+        const {ctx, canvas} = this;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.globalAlpha = this.transparency;
+        this.#drawSamples();
+        ctx.globalAlha = 1;
+    }
 
+    #drawSamples() {
+        const {ctx, samples, dataBounds, pixelBounds} = this;
+        for(const sample of samples) {
+            const {point} = sample;
+            const pixelLoc = math.remapPoint(
+                dataBounds, pixelBounds, point
+            );
+            graphics.drawPoint(ctx, pixelLoc);
+        }
     }
 }
