@@ -1,9 +1,10 @@
 class Chart {
-    constructor(container, samples, options) {
+    constructor(container, samples, options, onClick = null) {
         this.samples = samples;
         this.axesLabels = options.axesLabels;
         this.styles = options.styles;
         this.icon = options.icon;
+        this.onClick = onClick;
         
         this.canvas = document.createElement("canvas");
         // The chart will be a square
@@ -28,7 +29,8 @@ class Chart {
             dragging: false
         };
 
-        this.nearestSampleToMouse = null;
+        this.hoveredSample = null;
+        this.selectedSample = null;
 
         this.pixelBounds = this.#getPixelBounds();
         this.dataBounds = this.#getDataBounds();
@@ -76,7 +78,13 @@ class Chart {
                 )
             );
             const index = math.getNearest(pLoc, pPoints);
-            this.nearestSampleToMouse = this.samples[index];
+            const nearest = this.samples[index];
+            const dist = math.distance(pPoints[index], pLoc);
+            if(dist < this.margin/2) {
+                this.hoveredSample = nearest;
+            } else {
+                this.hoveredSample = null;
+            }
 
             this.#draw();
         }
@@ -102,6 +110,17 @@ class Chart {
 
             this.#draw();
             evt.preventDefault();
+        }
+        canvas.onclick = () => {
+            if(this.hoveredSample) {
+                this.selectedSample = this.hoveredSample;
+                if (this.onClick) {
+                    this.onClick(
+                        this.selectedSample
+                    );
+                }
+                this.#draw();
+            }
         }
     }
 
@@ -196,9 +215,15 @@ class Chart {
         this.#drawSamples(this.samples);
         ctx.globalAlha = 1;
 
-        if (this.nearestSampleToMouse) {
+        if (this.hoveredSample) {
             this.#emphasizeSample(
-                this.nearestSampleToMouse
+                this.hoveredSample
+            );
+        }
+
+        if (this.selectedSample) {
+            this.#emphasizeSample(
+                this.selectedSample, "yellow"
             );
         }
     }
