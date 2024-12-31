@@ -75,7 +75,7 @@ math.getNearest = (loc, points) => {
     let minDist = Number.MAX_SAFE_INTEGER;
     let nearestIndex = 0;
 
-    for (let i = 0; i < points.lenght; i++) {
+    for (let i = 0; i < points.length; i++) {
         const point = points[i];
         const d = math.distance(loc, point);
 

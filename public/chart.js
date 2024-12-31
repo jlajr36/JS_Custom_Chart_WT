@@ -14,7 +14,7 @@ class Chart {
 
         this.ctx = this.canvas.getContext("2d");
 
-        this.margin = options.size*0.1;
+        this.margin = options.size*0.11;
         this.transparency = 0.7;
 
         this.dataTrans = {
@@ -27,6 +27,8 @@ class Chart {
             offset: [0, 0],
             dragging: false
         };
+
+        this.nearestSampleToMouse = null;
 
         this.pixelBounds = this.#getPixelBounds();
         this.dataBounds = this.#getDataBounds();
@@ -54,7 +56,7 @@ class Chart {
                     math.subtract(
                         dragInfo.start, dragInfo.end
                     ),
-                    dataTrans.scale
+                    dataTrans.scale**2
                 );
                 const newOffset = math.add(
                     dataTrans.offset,
@@ -64,7 +66,6 @@ class Chart {
                     newOffset,
                     dataTrans.scale
                 );
-                this.#draw();
             }
             const pLoc = this.#getMouse(evt);
             const pPoints = this.samples.map(s =>
@@ -75,8 +76,9 @@ class Chart {
                 )
             );
             const index = math.getNearest(pLoc, pPoints);
-            const nearest = this.samples[index];
-            console.log(nearest);
+            this.nearestSampleToMouse = this.samples[index];
+
+            this.#draw();
         }
         canvas.onmouseup = () => {
             const newOffset = math.add(
@@ -188,10 +190,36 @@ class Chart {
     #draw() {
         const {ctx, canvas} = this;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         this.#drawAxes();
         ctx.globalAlpha = this.transparency;
-        this.#drawSamples();
+        this.#drawSamples(this.samples);
         ctx.globalAlha = 1;
+
+        if (this.nearestSampleToMouse) {
+            this.#emphasizeSample(
+                this.nearestSampleToMouse
+            );
+        }
+    }
+
+    #emphasizeSample(sample, color = "white") {
+        const pLoc = math.remapPoint(
+            this.dataBounds,
+            this.pixelBounds,
+            sample.point
+        );
+        const grd = this.ctx.createRadialGradient(
+            ...pLoc, 0, ...pLoc, this.margin
+        );
+        grd.addColorStop(0, color);
+        grd.addColorStop(1, "rgba(255, 255, 255, 0)");
+        graphics.drawPoint(
+            this.ctx, pLoc, grd, this.margin*2
+        );
+        this.#drawSamples(
+            [sample]
+        );
     }
 
     #drawAxes() {
@@ -276,8 +304,8 @@ class Chart {
         ctx.restore();
     }
 
-    #drawSamples() {
-        const {ctx, samples, dataBounds, pixelBounds} = this;
+    #drawSamples(samples) {
+        const {ctx, dataBounds, pixelBounds} = this;
         for(const sample of samples) {
             const {point, label} = sample;
             const pixelLoc = math.remapPoint(
