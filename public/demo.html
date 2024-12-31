@@ -44,13 +44,14 @@
             }
 
             const options = {
-                size: 250,
+                size: 600,
                 axesLabels: ["Kilometers", "Price"],
                 styles: {
                     basic: {color: 'blue', text: '🚗'},
                     sport: {color: 'gray', text: '🏎️'}
                 },
-                icon: "image"
+                icon: "image",
+                transparency: 0.4
             };
             graphics.generateImages(options.styles);
 
@@ -85,11 +86,21 @@
             }
 
             function handleClick(sample, doScroll = true) {
-                [...document.querySelectorAll('.emphasize')].
-                    forEach((e) => e.classList.remove('emphasize'));
+                if (sample == null) {
+                    [...document.querySelectorAll('.emphasize')].
+                        forEach((e) => e.classList.remove('emphasize'));
+                    return;
+                }
                 const el = document.getElementById(
                     "sample_" + sample.id
                 );
+                if(el.classList.contains("emphasize")) {
+                    el.classList.remove("empasize");
+                    chart.selectSample(null);
+                    return;
+                }
+                [...document.querySelectorAll('.emphasize')].
+                    forEach((e) => e.classList.remove('emphasize'));
                 el.classList.add("emphasize");
                 if(doScroll) {
                     el.scrollIntoView({

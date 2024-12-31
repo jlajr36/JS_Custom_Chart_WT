@@ -16,7 +16,7 @@ class Chart {
         this.ctx = this.canvas.getContext("2d");
 
         this.margin = options.size*0.11;
-        this.transparency = 0.7;
+        this.transparency = options.transparency||1;
 
         this.dataTrans = {
             offset: [0, 0],
@@ -112,15 +112,24 @@ class Chart {
             evt.preventDefault();
         }
         canvas.onclick = () => {
-            if(this.hoveredSample) {
-                this.selectedSample = this.hoveredSample;
-                if (this.onClick) {
-                    this.onClick(
-                        this.selectedSample
-                    );
-                }
-                this.#draw();
+            if(!math.equals(dragInfo.offset, [0, 0])) {
+                return;
             }
+            if(this.hoveredSample) {
+                if(this.selectedSample == this.hoveredSample) {
+                    this.selectedSample = null;
+                } else {
+                    this.selectedSample = this.hoveredSample;
+                }
+            } else {
+                this.selectedSample = null;
+            }
+            if (this.onClick) {
+                this.onClick(
+                    this.selectedSample
+                );
+            }
+            this.#draw();
         }
     }
 
@@ -210,7 +219,6 @@ class Chart {
         const {ctx, canvas} = this;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        this.#drawAxes();
         ctx.globalAlpha = this.transparency;
         this.#drawSamples(this.samples);
         ctx.globalAlha = 1;
@@ -226,6 +234,8 @@ class Chart {
                 this.selectedSample, "yellow"
             );
         }
+
+        this.#drawAxes();
     }
 
     selectSample(sample) {
@@ -256,6 +266,15 @@ class Chart {
         const {ctx, canvas, axesLabels, margin} = this;
         const {left, right, top, bottom} = this.pixelBounds;
         
+        ctx.clearRect(0, 0, this.canvas.width, margin);
+        ctx.clearRect(0, 0, margin, this.canvas.height);
+        ctx.clearRect(this.canvas.width - margin, 0,
+            margin, this.canvas.height
+        );
+        ctx.clearRect(0, this.canvas.height - margin,
+            this.canvas.width, margin
+        );
+
         graphics.drawText(ctx, {
             text: axesLabels[0],
             loc: [canvas.width/2, bottom + margin/2],
